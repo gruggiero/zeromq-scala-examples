@@ -35,7 +35,7 @@ object rrbroker  {
 			if (items.pollin(0)) {
 			do {
 				// receive message
-				var message = frontend.recv(0)
+				val message = frontend.recv(0)
 				more = frontend.hasReceiveMore
 
 				// Broker it
@@ -48,7 +48,7 @@ object rrbroker  {
 			if (items.pollin(1)) {
 			do {
 				// receive message
-				var message = backend.recv(0)
+				val message = backend.recv(0)
 				more = backend.hasReceiveMore()
 				// Broker it
 				if (more)
