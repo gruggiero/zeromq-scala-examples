@@ -25,7 +25,6 @@ class ZMsg {
 
 	def body(bodyStr: String) = msgParts.update(msgParts.length -1,bodyStr.getBytes)
 
-
 	def address = msgParts head
 
 	def addressToString = new String(msgParts head)
@@ -47,6 +46,7 @@ class ZMsg {
 	}
 
 	def length = msgParts.length
+	def size = msgParts.length
 
 	def stringToBody(bodyStr: String) = body(bodyStr)
 
@@ -60,10 +60,25 @@ class ZMsg {
 	def unwrap() = {
 		val address = msgParts remove 0
 
-		msgParts remove 0
+		if (msgParts.head.length == 0)
+			msgParts remove 0
 
 		address
 	}
+
+	def dump = {
+    println(new String("-") * 38)
+		for (msg <- msgParts) {
+			printf("[%d] ",msgParts.length)
+ 			if (msg.length == 17 && msg(0) == 0)  {
+        // println(decodeUUID(msg).substring(1))
+        println( "UUID " + new String(msg))
+      } else {
+        println(new String(msg))
+      }
+		}
+    println(new String("-") * 38)
+  }
 
 	override def toString = msgParts.mkString("|","|","|")
 

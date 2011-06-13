@@ -24,8 +24,8 @@ object lpclient {
 		var client = ctx.socket(ZMQ.REQ)
 		client.connect(ServerEndpoint)
 
-    var sequence = 0
-    var retriesLeft = RequestRetries
+		var sequence = 0
+		var retriesLeft = RequestRetries
 		breakable {
 			while (retriesLeft > 0 && !Thread.currentThread().isInterrupted) {
 				//  We send a request, then we work to get a reply
