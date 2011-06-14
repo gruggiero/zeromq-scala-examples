@@ -46,7 +46,7 @@ object ppqueue {
 				val workerAddr = msg.unwrap
 				println(new String(workerAddr))
 				//  Queue worker address for LRU routing
-				workerQueue.enqueue(workerAddr)
+				workers.enqueue(workerAddr)
 				//  Address is READY or else a client reply address
 				val clientAddr = msg.address
 				if (!clientAddr.equals(Ready)) {
@@ -57,19 +57,21 @@ object ppqueue {
 				//  Now get next client request, route to next worker
 				val msg = new ZMsg(frontend)
 				msg.dump
-				msg.wrap(workerQueue.dequeue)
+				msg.wrap(workers.dequeue)
 				msg.dump
 				backend.sendMsg(msg)
 			}
 			//  Send heartbeats to idle workers if it's time
-      // if (System.currentTimeMillis >= heartbeatTime) {
-			// 	workers foreach { worker =>
-			// 		val msg = new ZMsg(Heartbeat)
-			// 		msg.wrap(worker._1)
-			// 		backend.sendMsg(msg)
-			// 	}
-			// 	heartbeatTime = System.currentTimeMillis + HeartbeatInterval
-      // }
+      if (System.currentTimeMillis >= heartbeatTime) {
+				workers foreach { worker =>
+					val msg = new ZMsg(Heartbeat)
+					msg.dump
+					msg.wrap(worker._1)
+					msg.dump
+					backend.sendMsg(msg)
+				}
+				heartbeatTime = System.currentTimeMillis + HeartbeatInterval
+      }
 		}
 	}
 }

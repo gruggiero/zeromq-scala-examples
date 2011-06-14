@@ -12,6 +12,7 @@ object ppworker {
 	val Ready     = "\001" getBytes
 	val Heartbeat = "\002" getBytes
 
+	val ZmqPollMsec = 1000
 	val HeartbeatLiveness   = 3       //  3-5 is reasonable
 	val HeartbeatInterval   = 1000    //  msecs
 	val IntervalInit        = 1000    //  Initial reconnect
@@ -50,13 +51,14 @@ object ppworker {
 		do {
 			val msg = worker recvMsg
 
-			println("in cycle")
+			poller.poll(HeartbeatInterval * ZmqPollMsec)
+
 			if(poller.pollin(0)) {
 				//  Get message
 				//  - 3-part envelope + content -> request
 				//  - 1-part HEARTBEAT -> heartbeat
 				val msg = new ZMsg(worker)
-				printf("Received %s : %s\n", identity, msg.bodyToString)
+				printf("%s : %s\n", identity, msg.bodyToString)
 				if (msg.size == 3) {
 					cycles += 1
 					//  Simulate various problems, after a few cycles
